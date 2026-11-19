@@ -5,6 +5,13 @@ All notable changes to `qalainau/filament-warp-offline` will be documented in th
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-11-20
+
+### Fixed
+
+- Changing the language while *Work offline* is on (for example with a language menu that reloads the page) left the list's column headings, badges, dates and the create button on the device in the previous language. The device now reads the list again in the new language when the page opens, while still working offline. A really offline phone still shows the previous language until its next sync.
+- French: the *En attente d'envoi* label of the offline list used a straight apostrophe, unlike the rest of the translation.
+
 ## [1.0.0] - 2026-11-20
 
 ### Added
