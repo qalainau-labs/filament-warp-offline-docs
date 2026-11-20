@@ -5,6 +5,12 @@ All notable changes to `qalainau/filament-warp-offline` will be documented in th
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2026-11-20
+
+### Fixed
+
+- The confirmation box of a page button (`OfflinePageAction`, for example *Clock out* on a time clock page) was see-through while offline: the page text behind it showed through the box and overlapped its text, in light and dark mode. The box now has its own white (dark: gray) background wherever it is shown.
+
 ## [1.0.1] - 2026-11-20
 
 ### Fixed
