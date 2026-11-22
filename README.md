@@ -922,7 +922,8 @@ FilamentWarpOfflinePlugin::make()
 | --- | --- | --- |
 | `resources(array)` | — | The resources that work offline. |
 | `navigationGroup(?string)` | none | Group of the *Offline* page and the change log. |
-| `page(bool)` | `true` | The *Offline* page. |
+| `page(bool)` | `true` | The *Offline* page. `false` takes it off. |
+| `offlinePage(bool\|string)` | `true` | Replace the *Offline* page with your own class (it must extend `Qalainau\FilamentWarpOffline\Pages\OfflinePage`), or `false` to take it off. See [Your own Offline page](#your-own-offline-page). |
 | `changeLog(bool, canView:)` | `true` | The change log and who may see it. |
 | `devices(bool, canView:)` | off | The [device list](#the-device-list): unsent changes and last sync per device, and deleting the data on a lost device. |
 | `pwa(...)` | on | Web app manifest: name, short name, colors, icon. |
@@ -945,6 +946,26 @@ Per resource, in `offline(OfflineConfig $offline)`:
 | `conflicts(ConflictStrategy)` | [Conflicts](#conflicts) |
 | `creatable(bool)`, `editable(bool)`, `deletable(bool)`, `readOnly()` | What may be done offline (your policies still decide on the server) |
 | `mutateBeforeSave()`, `afterSync()` | [Your page hooks](#the-offline-form) |
+
+### Your own Offline page
+
+To add your own text, a heading or a view to the *Offline* page (the one with *Prepare now*), extend the page and hand it to the plugin:
+
+```php
+use Qalainau\FilamentWarpOffline\Pages\OfflinePage;
+
+class FieldOfflinePage extends OfflinePage
+{
+    protected string $view = 'pages.field-offline'; // @include('filament-warp-offline::pages.offline') inside it
+}
+
+FilamentWarpOfflinePlugin::make()->offlinePage(FieldOfflinePage::class)
+```
+
+- The address (`/offline`) and the route name stay the same, so links, the web app manifest and the Service Worker keep working. Do not change `$slug` in the subclass.
+- The banner link, the *Prepare now* flow and the offline fallback all point to your page.
+- A class that does not extend `OfflinePage` throws an `InvalidArgumentException`. `page(false)` and `offlinePage(false)` take the page off; `page(true)` brings back the standard page (or keeps yours).
+- `canAccessUsing()` is asked about your class name, not `OfflinePage`.
 
 ## Recipes
 
@@ -1055,6 +1076,7 @@ Both tables have an index that starts with the tenant (`tenant_type`, `tenant_id
 - Offline, the table and the form are drawn by Warp Offline, not by Livewire: columns, filters and fields that need the server ([list](#the-offline-form)) are shown as text or left out, and custom actions are not available — use `OfflineAction`.
 - Page hooks (`mutateFormDataBeforeSave()`, `afterCreate()`…) do not run for offline changes; use `mutateBeforeSave()` and `afterSync()`.
 - `Builder` and many-to-many repeaters cannot be changed offline.
+- A photo can be saved on the device, but anything that needs the server cannot be used without a connection. Warp Painter's editing screen and its save (crop, rotate, layers) talk to the server, so a photo can be edited only while online; keep the Painter action out of the offline form, or tell people to edit after the photo is sent. Drawing on photos works offline with Warp Markup instead.
 - Drawing on photos needs Warp Markup; its `MarkupField` works offline when its picture comes from `imageFrom()` or a fixed URL ([details](#drawing-on-a-photo-warp-markup)).
 - Cards and swipes on phones follow Warp Mobile's `mobileCards()` and `swipeActions()` when Warp Mobile is installed; only offline actions, `edit`, `view` and `delete` can be swipe buttons offline ([details](#cards-and-swipes-on-phones-warp-mobile)).
 - Relation managers can be read offline ([`relationManagers()`](#viewing-a-record-and-its-related-lists)), not changed, and an `infolist()` is not drawn offline.

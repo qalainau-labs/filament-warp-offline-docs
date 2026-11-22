@@ -5,6 +5,26 @@ All notable changes to `qalainau/filament-warp-offline` will be documented in th
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [1.1.0] - 2026-11-22
+
+### Fixed
+- **A device's first report could fail with HTTP 500**: with the device list on (`devices()`), when the first two reports of a new device arrived at the same time (for example right after preparing it), both tried to add the device and the second one failed on the unique device ID. The second report now updates the row the first one added.
+
+- **The panel's root page (for example `/admin`, a page with the slug `/` and `HasOfflineActions`) could not be opened offline.** The service worker's scope ended with a slash (`/admin/`), so `/admin` itself was outside it: the page was never saved and showed the browser's offline error. The scope is now `/admin` (the manifest scope and `Service-Worker-Allowed` too), and the home screen still opens `/admin/`. A device registers the new scope the next time the panel is opened online; the root page is saved from the visit after that. Because a scope is a text prefix, a page whose address only begins with the panel's (`/admin-reports`, `/administrator`) is also under the service worker; Warp Offline leaves those pages and their files alone.
+- On a page with offline buttons (`HasOfflineActions`), the offline status bar was shown again after every button press on a server that reuses one application for many requests (for example Pest browser tests), so a time clock page could show two, three or more bars. The page now always shows one.
+- The confirmation box of a page button (`OfflinePageAction`) used the plugin's own button text while offline (Japanese: *実行する*) and Filament's text while online (Japanese: *確定*). Both boxes now use the same text: Filament's *Confirm* and *Cancel*, or your own `modalSubmitActionLabel()` / `modalCancelActionLabel()`.
+- **Page access rules on a replaced page**: when the app replaced a standard page or resource with a subclass (`xxxPage()`/`xxxResource()`), `canAccessUsing()` and `canWriteUsing()` received the subclass as `$page`, so a rule such as `$page !== Projects::class` did not match and a page the app had closed still opened (HTTP 200). `$page` is now always the plugin's own standard class, whatever the app swaps in. A rule that compared `$page` with the app's own subclass must compare with the standard class instead.
+
+### Added
+
+- `offlinePage()` replaces the *Offline* page with your own class (a subclass of `OfflinePage`), keeping the same address and route name. `getOfflinePage()` returns it. `offlinePage(false)` takes the page off, like `page(false)`. See *Your own Offline page* in the README.
+
+### Documentation
+
+- The README's *Limits* now say that a photo saved on the device cannot be edited with Warp Painter without a connection: Painter's editing screen and its save need the server.
+
 ## [1.0.2] - 2026-11-20
 
 ### Fixed
