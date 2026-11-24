@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-11-25
+
+### Fixed
+
+- **Text typed in a `ScanInput` before its script finished loading was lost**: the field loads its script when it appears, and on a slow connection or a busy device the first characters typed (or a click on “Create” right away) went nowhere: the field was emptied when the script arrived, and the record could be saved without them. Those characters now reach the form and stay in the field. A re-render while the script was still loading (for example a validation error) also no longer shows the JavaScript error `state is not defined`. Nothing to change in your app.
+
 ## [1.2.0] - 2026-11-25
 
 ### Added
