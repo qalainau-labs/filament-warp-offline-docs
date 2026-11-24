@@ -1067,7 +1067,12 @@ Both tables have an index that starts with the tenant (`tenant_type`, `tenant_id
 
 - **The *Work offline* switch** on each offline list page (and on the Offline page) uses the offline table and form while still connected; create and edit URLs of offline resources open the offline form too. Changes wait until it is switched off.
 - **The browser's own offline mode** (DevTools → Network → Offline, or airplane mode on a phone) also tests the service worker: reload, open an edit URL, open a page that is not offline — everything should still show something useful.
-- **Automated browser tests** (Playwright): `context.setOffline(true)` turns the network off for the page and its service worker.
+- **Automated browser tests** (Playwright): `context.setOffline(true)` turns the network off for the page and its service worker. Requests already on their way still finish; a reply that arrives after the connection dropped does not switch the page back to online.
+- **Waiting for a sync to finish**: `window.WarpOffline.whenIdle()` returns a promise that resolves when nothing is being sent or read any more (including a sync that starts while you wait). Use it instead of a fixed pause before you check the server or the queue:
+
+  ```js
+  await page.evaluate(() => window.WarpOffline.whenIdle())
+  ```
 - **Feature tests**: changes from devices are plain JSON posted to `/{panel}/warp-offline/sync`; see the package's tests for examples.
 
 ## Limits

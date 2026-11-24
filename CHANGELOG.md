@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-25
+
+### Added
+
+- `window.WarpOffline.whenIdle()`: a promise that resolves when the device has finished sending and reading (including a sync that starts while it waits). Browser tests can wait for a sync with it instead of a fixed pause. See *Testing it* in the README.
+
+### Fixed
+
+- **A confirmed page button could do nothing after the connection dropped during a sync.** When the reply to a sync request that was already on its way arrived after the connection dropped, the status bar switched back to *Online*. A page button with a confirmation (for example *Clock out*) was then sent to the server instead of the device: no confirmation box appeared and nothing happened. A reply now only marks the device online when the connection did not drop while it was on its way and the browser reports a connection.
+
 ## [1.1.0] - 2026-11-22
 
 ### Fixed
