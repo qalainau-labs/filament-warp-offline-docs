@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.2] - 2026-11-26
+
+### Fixed
+
+- Related lists taken offline (relation managers) now break ties on the table's default sort column by primary key, in the same direction. Before, rows with the same sort value could come back in a different order on PostgreSQL, so which rows made it under the row limit could change from one sync to the next.
+- Relationship select options taken offline (up to 1,000) are now read in primary key order, so the same options are kept on every sync when there are more than 1,000.
+
 ## [1.2.1] - 2026-11-25
 
 ### Fixed
